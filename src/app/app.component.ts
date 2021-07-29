@@ -1,28 +1,51 @@
-import { Component, TemplateRef, ViewChild } from '@angular/core';
+import { Component, OnInit, TemplateRef, ViewChild } from '@angular/core';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 
-import { fade } from './shared/animations/fade';
-import { ModalRef } from './shared/components/modal/models/modal-ref';
 import { ModalService } from './shared/components/modal/services/modal.service';
+import { ModalRef } from './shared/components/modal/models/modal-ref';
+import { fade } from './shared/animations/fade';
 
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.scss'],
-  animations: [fade]
+  animations: [fade],
 })
-export class AppComponent {
-  @ViewChild('modal') public modalTemplateRef: TemplateRef<any>;
-  title = 'a11y-p2';
-  public firstName = 'Flávio';
-  public modalRef: ModalRef;
-  public info = false;
+export class AppComponent implements OnInit {
+  @ViewChild('modal') modalTemplateRef: TemplateRef<any>;
 
-  constructor(private modalService: ModalService) {}
+  firstName = 'Matheus';
+  modalRef: ModalRef;
+  info = false;
+  form: FormGroup;
 
-  public show(): void {
+  constructor(
+    private modalService: ModalService,
+    private formBuilder: FormBuilder
+  ) {}
+
+  ngOnInit() {
+    this.form = this.formBuilder.group({
+      firstName: ['Matheus', Validators.required],
+      surname: ['', Validators.required],
+      age: ['', Validators.required],
+      info: [false],
+    });
+  }
+
+  show() {
     this.modalRef = this.modalService.open({
       templateRef: this.modalTemplateRef,
-      title: 'User Details'
+      title: 'User Details',
     });
+  }
+
+  submit() {
+    if (this.form.invalid) {
+      return;
+    }
+
+    console.log(this.form.value);
+    this.modalRef.close();
   }
 }

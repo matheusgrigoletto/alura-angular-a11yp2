@@ -1,26 +1,27 @@
-import { AfterViewInit, Directive, ElementRef, HostListener } from '@angular/core';
+import {
+  AfterViewInit,
+  Directive,
+  ElementRef,
+  HostListener,
+} from '@angular/core';
 
 @Directive({
-  selector: '[appFocusTrap]'
+  selector: '[appFocusTrap]',
 })
 export class FocusTrapDirective implements AfterViewInit {
-
   private firstFocusableElement: HTMLElement = null;
   private lastFocusableElement: HTMLElement = null;
 
   constructor(private elementRef: ElementRef<any>) {}
 
-  public ngAfterViewInit(): void {
-    const focusableElements = this.elementRef
-      .nativeElement
-      .querySelectorAll(`
+  ngAfterViewInit() {
+    const focusableElements = this.elementRef.nativeElement.querySelectorAll(`
         [tabindex]:not([tabindex="-1"]),
         a[href]:not([disabled]),
         button:not([disabled]),
         textarea:not([disabled]),
         input:not([disabled]),
-        select:not([disabled])`
-      ) as Array<HTMLElement>;
+        select:not([disabled])`) as Array<HTMLElement>;
 
     this.firstFocusableElement = focusableElements[0];
     this.lastFocusableElement = focusableElements[focusableElements.length - 1];
@@ -28,12 +29,15 @@ export class FocusTrapDirective implements AfterViewInit {
   }
 
   @HostListener('keydown', ['$event'])
-  public manageTab(event: KeyboardEvent): void {
-    if (event.key !== 'Tab') {
-      return ;
+  manageTab(event: KeyboardEvent) {
+    if (event.key.toUpperCase() !== 'TAB') {
+      return;
     }
 
-    if (event.shiftKey && document.activeElement === this.firstFocusableElement) {
+    if (
+      event.shiftKey &&
+      document.activeElement === this.firstFocusableElement
+    ) {
       this.lastFocusableElement.focus();
       event.preventDefault();
     } else if (document.activeElement === this.lastFocusableElement) {

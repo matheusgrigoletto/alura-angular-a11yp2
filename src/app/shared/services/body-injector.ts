@@ -1,12 +1,17 @@
-import { ComponentRef, EmbeddedViewRef } from '@angular/core';
-import { ApplicationRef, Injectable } from '@angular/core';
+import {
+  ComponentRef,
+  EmbeddedViewRef,
+  ApplicationRef,
+  Injectable,
+} from '@angular/core';
 
-@Injectable({ providedIn: 'root'})
+@Injectable({
+  providedIn: 'root',
+})
 export class BodyInjectorService {
-
   constructor(private appRef: ApplicationRef) {}
 
-  public stackBeforeAppRoot(componentRef: ComponentRef<any>): void {
+  stackBeforeAppRoot(componentRef: ComponentRef<any>) {
     const domElement = this.createDomElement(componentRef);
     const appRoot = document.body.querySelector('app-root');
     document.body.insertBefore(domElement, appRoot);
@@ -14,9 +19,10 @@ export class BodyInjectorService {
 
   private createDomElement(componentRef: ComponentRef<any>): HTMLElement {
     this.appRef.attachView(componentRef.hostView);
+
     const domElement = (componentRef.hostView as EmbeddedViewRef<any>)
       .rootNodes[0] as HTMLElement;
-    return domElement;
 
+    return domElement;
   }
 }
